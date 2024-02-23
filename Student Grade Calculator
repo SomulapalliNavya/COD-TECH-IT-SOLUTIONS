@@ -1,0 +1,135 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Student {
+    String name;
+    int rollNumber;
+    Map<String, Integer> subjectMarks;
+
+    public Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.subjectMarks = new HashMap<>();
+    }
+
+    public void addSubjectMarks(String subject, int marks) {
+        subjectMarks.put(subject, marks);
+    }
+
+    public void updateSubjectMarks(String subject, int marks) {
+        if (subjectMarks.containsKey(subject)) {
+            subjectMarks.put(subject, marks);
+        } else {
+            System.out.println("Subject not found for the student.");
+        }
+    }
+
+    public void deleteSubject(String subject) {
+        if (subjectMarks.containsKey(subject)) {
+            subjectMarks.remove(subject);
+        } else {
+            System.out.println("Subject not found for the student.");
+        }
+    }
+
+    public double calculateOverallPercentage() {
+        int totalMarks = subjectMarks.values().stream().mapToInt(Integer::intValue).sum();
+        return (double) totalMarks / subjectMarks.size();
+    }
+
+    public String calculateGrade() {
+        double percentage = calculateOverallPercentage();
+
+        // Define your grade criteria here
+        if (percentage >= 90) {
+            return "A";
+        } else if (percentage >= 80) {
+            return "B";
+        } else if (percentage >= 70) {
+            return "C";
+        } else if (percentage >= 60) {
+            return "D";
+        } else {
+            return "F";
+        }
+    }
+}
+
+public class GradeManagementSystem {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Map<Integer, Student> students = new HashMap<>();
+
+        while (true) {
+            System.out.println("1. Add Student\n2. Update Student\n3. Delete Student\n4. Calculate Grade\n5. Exit");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter name: ");
+                    String name = scanner.next();
+                    System.out.println("Enter roll number: ");
+                    int rollNumber = scanner.nextInt();
+
+                    Student student = new Student(name, rollNumber);
+                    students.put(rollNumber, student);
+
+                    System.out.println("Student added successfully.");
+                    break;
+
+                case 2:
+                    System.out.println("Enter roll number to update: ");
+                    int rollToUpdate = scanner.nextInt();
+                    Student studentToUpdate = students.get(rollToUpdate);
+
+                    if (studentToUpdate != null) {
+                        System.out.println("Enter subject to update: ");
+                        String subjectToUpdate = scanner.next();
+                        System.out.println("Enter new marks: ");
+                        int newMarks = scanner.nextInt();
+
+                        studentToUpdate.updateSubjectMarks(subjectToUpdate, newMarks);
+
+                        System.out.println("Subject marks updated successfully.");
+                    } else {
+                        System.out.println("Student not found.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.println("Enter roll number to delete: ");
+                    int rollToDelete = scanner.nextInt();
+
+                    if (students.containsKey(rollToDelete)) {
+                        students.remove(rollToDelete);
+                        System.out.println("Student deleted successfully.");
+                    } else {
+                        System.out.println("Student not found.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Enter roll number to calculate grade: ");
+                    int rollToGrade = scanner.nextInt();
+                    Student studentToGrade = students.get(rollToGrade);
+
+                    if (studentToGrade != null) {
+                        System.out.println("Overall Percentage: " + studentToGrade.calculateOverallPercentage());
+                        System.out.println("Grade: " + studentToGrade.calculateGrade());
+                    } else {
+                        System.out.println("Student not found.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("Exiting the program.");
+                    scanner.close();
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
+            }
+        }
+    }
+}
